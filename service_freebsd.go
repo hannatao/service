@@ -5,6 +5,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/signal"
@@ -159,6 +160,10 @@ func (s *freebsdService) Status() (Status, error) {
 		return StatusUnknown, err
 	}
 	return StatusRunning, nil
+}
+
+func (s *freebsdService) GetPid() (int32, error) {
+	return 0, errors.New("not implemented yet")
 }
 
 func (s *freebsdService) Start() error {
