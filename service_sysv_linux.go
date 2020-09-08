@@ -166,6 +166,10 @@ func (s *sysv) Status() (Status, error) {
 	}
 }
 
+func (s *sysv) GetPid() (int32, error) {
+	return 0, errors.New("not implemented yet")
+}
+
 func (s *sysv) Start() error {
 	return run("service", s.Name, "start")
 }

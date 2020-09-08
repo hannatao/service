@@ -8,6 +8,7 @@ package service
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -218,6 +219,10 @@ func (s *aixService) Status() (Status, error) {
 	}
 
 	return StatusUnknown, ErrNotInstalled
+}
+
+func (s *aixService) GetPid() (int32, error) {
+	return 0, errors.New("not implemented yet")
 }
 
 func (s *aixService) Start() error {

@@ -7,6 +7,7 @@ package service
 import (
 	"bytes"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"os"
 	"os/signal"
@@ -197,6 +198,10 @@ func (s *solarisService) Status() (Status, error) {
 		}
 	}
 	return StatusUnknown, err
+}
+
+func (ws *solarisService) GetPid() (int32, error) {
+	return 0, errors.New("not implemented yet")
 }
 
 func (s *solarisService) Start() error {

@@ -5,6 +5,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/signal"
@@ -394,6 +395,10 @@ func (ws *windowsService) Status() (Status, error) {
 	default:
 		return StatusUnknown, fmt.Errorf("unknown status %v", status)
 	}
+}
+
+func (ws *windowsService) GetPid() (int32, error) {
+	return 0, errors.New("not implemented yet")
 }
 
 func (ws *windowsService) Start() error {

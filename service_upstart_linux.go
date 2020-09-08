@@ -215,6 +215,10 @@ func (s *upstart) Status() (Status, error) {
 	}
 }
 
+func (s *upstart) GetPid() (int32, error) {
+	return 0, errors.New("not implemented yet")
+}
+
 func (s *upstart) Start() error {
 	return run("initctl", "start", s.Name)
 }

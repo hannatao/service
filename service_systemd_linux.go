@@ -263,6 +263,23 @@ func (s *systemd) Status() (Status, error) {
 	}
 }
 
+func (s *systemd) GetPid() (int32, error) {
+	exitCode, out, err := runWithOutput("systemctl", "status", s.Name)
+	if exitCode == 0 && err != nil {
+		return 0, err
+	}
+	re := regexp.MustCompile(`Main PID: ([0-9]+)`)
+	matches := re.FindStringSubmatch(out)
+	if len(matches) != 2 {
+		return 0, errors.New("failed to match pid info")
+	}
+	pid, err := strconv.ParseInt(matches[1], 10, 32)
+	if err != nil {
+		return 0, err
+	}
+	return int32(pid), nil
+}
+
 func (s *systemd) Start() error {
 	return s.runAction("start")
 }
