@@ -12,6 +12,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"syscall"
 	"text/template"
@@ -208,6 +209,25 @@ func (s *darwinLaunchdService) Status() (Status, error) {
 	}
 
 	return StatusUnknown, ErrNotInstalled
+}
+
+func (s *darwinLaunchdService) GetPid() (int32, error) {
+	exitCode, out, err := runWithOutput("launchctl", "list", s.Name)
+	if exitCode == 0 && err != nil {
+		if !strings.Contains(err.Error(), "failed with StandardError") {
+			return 0, err
+		}
+	}
+	re := regexp.MustCompile(`"PID" = ([0-9]+);`)
+	matches := re.FindStringSubmatch(out)
+	if len(matches) != 2 {
+		return 0, errors.New("failed to match pid info")
+	}
+	pid, err := strconv.ParseInt(matches[1], 10, 32)
+	if err != nil {
+		return 0, err
+	}
+	return int32(pid), nil
 }
 
 func (s *darwinLaunchdService) Start() error {
