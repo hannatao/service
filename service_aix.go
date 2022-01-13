@@ -221,6 +221,7 @@ func (s *aixService) Status() (Status, error) {
 	return StatusUnknown, ErrNotInstalled
 }
 
+
 func (s *aixService) GetPid() (uint32, error) {
 	return 0, errors.New("not implemented yet")
 }
