@@ -166,7 +166,7 @@ func (s *sysv) Status() (Status, error) {
 	}
 }
 
-func (s *sysv) GetPid() (int32, error) {
+func (s *sysv) GetPid() (uint32, error) {
 	return 0, errors.New("not implemented yet")
 }
 

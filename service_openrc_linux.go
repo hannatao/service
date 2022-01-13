@@ -193,6 +193,10 @@ func (s *openrc) Status() (Status, error) {
 	return StatusRunning, nil
 }
 
+func (s *openrc) GetPid() (uint32, error) {
+	return 0, errors.New("not implemented yet")
+}
+
 func (s *openrc) Start() error {
 	return run("rc-service", s.Name, "start")
 }

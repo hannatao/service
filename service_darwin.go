@@ -210,7 +210,7 @@ func (s *darwinLaunchdService) Status() (Status, error) {
 	return StatusUnknown, ErrNotInstalled
 }
 
-func (s *darwinLaunchdService) GetPid() (int32, error) {
+func (s *darwinLaunchdService) GetPid() (uint32, error) {
 	exitCode, out, err := runWithOutput("launchctl", "list", s.Name)
 	if exitCode == 0 && err != nil {
 		if !strings.Contains(err.Error(), "failed with StandardError") {
@@ -222,11 +222,11 @@ func (s *darwinLaunchdService) GetPid() (int32, error) {
 	if len(matches) != 2 {
 		return 0, errors.New("failed to match pid info")
 	}
-	pid, err := strconv.ParseInt(matches[1], 10, 32)
+	pid, err := strconv.ParseUint(matches[1], 10, 32)
 	if err != nil {
 		return 0, err
 	}
-	return int32(pid), nil
+	return uint32(pid), nil
 }
 
 func (s *darwinLaunchdService) Start() error {

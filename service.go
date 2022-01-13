@@ -398,7 +398,7 @@ type Service interface {
 	Status() (Status, error)
 
 	// GetPid return process id of the service.
-	GetPid() (int32, error)
+	GetPid() (uint32, error)
 }
 
 // ControlAction list valid string texts to use in Control.

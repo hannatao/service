@@ -5,7 +5,6 @@
 package service
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"os/signal"
@@ -397,8 +396,27 @@ func (ws *windowsService) Status() (Status, error) {
 	}
 }
 
-func (ws *windowsService) GetPid() (int32, error) {
-	return 0, errors.New("not implemented yet")
+func (ws *windowsService) GetPid() (uint32, error) {
+	m, err := mgr.Connect()
+	if err != nil {
+		return 0, err
+	}
+	defer m.Disconnect()
+
+	s, err := m.OpenService(ws.Name)
+	if err != nil {
+		if errno, ok := err.(syscall.Errno); ok && errno == errnoServiceDoesNotExist {
+			return 0, ErrNotInstalled
+		}
+		return 0, err
+	}
+	defer s.Close()
+
+	status, err := s.Query()
+	if err != nil {
+		return 0, err
+	}
+	return status.ProcessId, nil
 }
 
 func (ws *windowsService) Start() error {

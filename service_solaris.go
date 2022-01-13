@@ -200,7 +200,7 @@ func (s *solarisService) Status() (Status, error) {
 	return StatusUnknown, err
 }
 
-func (ws *solarisService) GetPid() (int32, error) {
+func (ws *solarisService) GetPid() (uint32, error) {
 	return 0, errors.New("not implemented yet")
 }
 
