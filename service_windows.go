@@ -5,7 +5,6 @@
 package service
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"os/signal"
