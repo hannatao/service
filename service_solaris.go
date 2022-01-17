@@ -135,9 +135,9 @@ func (s *solarisService) Install() error {
 	}
 	var to = &struct {
 		*Config
-		Prefix string
+		Prefix  string
 		Display string
-		Path string
+		Path    string
 	}{
 		s.Config,
 		s.Prefix,
@@ -151,7 +151,7 @@ func (s *solarisService) Install() error {
 	}
 
 	// import service
-	err = run("svcadm", "restart", "manifest-import" )
+	err = run("svcadm", "restart", "manifest-import")
 	if err != nil {
 		return err
 	}
@@ -172,7 +172,7 @@ func (s *solarisService) Uninstall() error {
 	}
 
 	// unregister service
-	err = run("svcadm", "restart", "manifest-import" )
+	err = run("svcadm", "restart", "manifest-import")
 	if err != nil {
 		return err
 	}
@@ -200,7 +200,7 @@ func (s *solarisService) Status() (Status, error) {
 	return StatusUnknown, err
 }
 
-func (ws *solarisService) GetPid() (int32, error) {
+func (ws *solarisService) GetPid() (uint32, error) {
 	return 0, errors.New("not implemented yet")
 }
 

@@ -162,7 +162,7 @@ func (s *freebsdService) Status() (Status, error) {
 	return StatusRunning, nil
 }
 
-func (s *freebsdService) GetPid() (int32, error) {
+func (s *freebsdService) GetPid() (uint32, error) {
 	return 0, errors.New("not implemented yet")
 }
 

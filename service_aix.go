@@ -1,3 +1,5 @@
+//+build aix
+
 // Copyright 2015 Daniel Theophanes.
 // Use of this source code is governed by a zlib-style
 // license that can be found in the LICENSE file.
@@ -43,20 +45,17 @@ func (aixSystem) New(i Interface, c *Config) (Service, error) {
 	return s, nil
 }
 
-func getPidOfSvcMaster() int {
-	pat := regexp.MustCompile(`\s+root\s+(\d+)\s+\d+\s+\d+\s+\w+\s+\d+\s+\S+\s+[0-9:]+\s+/usr/sbin/srcmstr`)
-	cmd := exec.Command("ps", "-ef")
+func getArgsFromPid(pid int) string {
+	cmd := exec.Command("ps", "-o", "args", "-p", strconv.Itoa(pid))
 	var out bytes.Buffer
 	cmd.Stdout = &out
-	pid := 0
 	if err := cmd.Run(); err == nil {
-		matches := pat.FindAllStringSubmatch(out.String(),-1)
-		for _, match := range matches {
-			pid, _ = strconv.Atoi(match[1])
-			break
+		lines := strings.Split(out.String(), "\n")
+		if len(lines) > 1 {
+			return strings.TrimSpace(lines[1])
 		}
 	}
-	return pid
+	return ""
 }
 
 func init() {
@@ -74,8 +73,8 @@ func init() {
 }
 
 func isInteractive() (bool, error) {
-	// The PPid of a service process should match PID of srcmstr.
-	return os.Getppid() != getPidOfSvcMaster(), nil
+	// The parent process of a service process should be srcmstr.
+	return getArgsFromPid(os.Getppid()) != "/usr/sbin/srcmstr", nil
 }
 
 type aixService struct {
@@ -124,7 +123,7 @@ func (s *aixService) Install() error {
 	if err != nil {
 		return err
 	}
-	err = run("mkssys", "-s", s.Name, "-p", path, "-u", "0", "-R", "-Q", "-S", "-n", "15", "-f", "9", "-d", "-w", "30" )
+	err = run("mkssys", "-s", s.Name, "-p", path, "-u", "0", "-R", "-Q", "-S", "-n", "15", "-f", "9", "-d", "-w", "30")
 	if err != nil {
 		return err
 	}
@@ -222,7 +221,8 @@ func (s *aixService) Status() (Status, error) {
 	return StatusUnknown, ErrNotInstalled
 }
 
-func (s *aixService) GetPid() (int32, error) {
+
+func (s *aixService) GetPid() (uint32, error) {
 	return 0, errors.New("not implemented yet")
 }
 

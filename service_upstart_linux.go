@@ -215,7 +215,7 @@ func (s *upstart) Status() (Status, error) {
 	}
 }
 
-func (s *upstart) GetPid() (int32, error) {
+func (s *upstart) GetPid() (uint32, error) {
 	return 0, errors.New("not implemented yet")
 }
 

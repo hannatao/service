@@ -166,7 +166,7 @@ func (s *sysv) Status() (Status, error) {
 	}
 }
 
-func (s *sysv) GetPid() (int32, error) {
+func (s *sysv) GetPid() (uint32, error) {
 	return 0, errors.New("not implemented yet")
 }
 
@@ -217,7 +217,7 @@ get_pid() {
 }
 
 is_running() {
-    [ -f "$pid_file" ] && ps $(get_pid) > /dev/null 2>&1
+    [ -f "$pid_file" ] && cat /proc/$(get_pid)/stat > /dev/null 2>&1
 }
 
 case "$1" in
