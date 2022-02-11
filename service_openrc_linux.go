@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"os/signal"
 	"regexp"
+	"strconv"
 	"syscall"
 	"text/template"
 	"time"
@@ -194,7 +196,15 @@ func (s *openrc) Status() (Status, error) {
 }
 
 func (s *openrc) GetPid() (uint32, error) {
-	return 0, errors.New("not implemented yet")
+	pidBs, err := ioutil.ReadFile("/var/run/" + s.Config.Name + ".pid")
+	if err != nil {
+		return 0, err
+	}
+	pid, err := strconv.ParseUint(string(pidBs), 10, 32)
+	if err != nil {
+		return 0, err
+	}
+	return uint32(pid), nil
 }
 
 func (s *openrc) Start() error {
@@ -231,6 +241,7 @@ command={{.Path|cmdEscape}}
 command_args="{{range .Arguments}}{{.}} {{end}}"
 {{- end }}
 name=$(basename $(readlink -f $command))
+pidfile="/var/run/{{.Name}}.pid"
 supervise_daemon_args="--stdout /var/log/${name}.log --stderr /var/log/${name}.err"
 
 {{- if .Dependencies }}

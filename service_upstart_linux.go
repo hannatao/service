@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/signal"
 	"regexp"
+	"strconv"
 	"strings"
 	"syscall"
 	"text/template"
@@ -216,7 +217,20 @@ func (s *upstart) Status() (Status, error) {
 }
 
 func (s *upstart) GetPid() (uint32, error) {
-	return 0, errors.New("not implemented yet")
+	exitCode, out, err := runWithOutput("initctl", "status", s.Name)
+	if exitCode == 0 && err != nil {
+		return 0, err
+	}
+	re := regexp.MustCompile(`process ([0-9]+)`)
+	matches := re.FindStringSubmatch(out)
+	if len(matches) != 2 {
+		return 0, errors.New("failed to match pid info")
+	}
+	pid, err := strconv.ParseUint(matches[1], 10, 32)
+	if err != nil {
+		return 0, err
+	}
+	return uint32(pid), nil
 }
 
 func (s *upstart) Start() error {
