@@ -7,8 +7,10 @@ package service
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"syscall"
 	"text/template"
@@ -167,7 +169,15 @@ func (s *sysv) Status() (Status, error) {
 }
 
 func (s *sysv) GetPid() (uint32, error) {
-	return 0, errors.New("not implemented yet")
+	pidBs, err := ioutil.ReadFile("/var/run/" + s.Config.Name + ".pid")
+	if err != nil {
+		return 0, err
+	}
+	pid, err := strconv.ParseUint(string(pidBs), 10, 32)
+	if err != nil {
+		return 0, err
+	}
+	return uint32(pid), nil
 }
 
 func (s *sysv) Start() error {
