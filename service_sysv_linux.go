@@ -173,7 +173,7 @@ func (s *sysv) GetPid() (uint32, error) {
 	if err != nil {
 		return 0, err
 	}
-	pid, err := strconv.ParseUint(string(pidBs), 10, 32)
+	pid, err := strconv.ParseUint(strings.TrimSpace(string(pidBs)), 10, 32)
 	if err != nil {
 		return 0, err
 	}

@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"regexp"
 	"strconv"
+	"strings"
 	"syscall"
 	"text/template"
 	"time"
@@ -200,7 +201,7 @@ func (s *openrc) GetPid() (uint32, error) {
 	if err != nil {
 		return 0, err
 	}
-	pid, err := strconv.ParseUint(string(pidBs), 10, 32)
+	pid, err := strconv.ParseUint(strings.TrimSpace(string(pidBs)), 10, 32)
 	if err != nil {
 		return 0, err
 	}
@@ -242,7 +243,8 @@ command_args="{{range .Arguments}}{{.}} {{end}}"
 {{- end }}
 name=$(basename $(readlink -f $command))
 pidfile="/var/run/{{.Name}}.pid"
-supervise_daemon_args="--stdout /var/log/${name}.log --stderr /var/log/${name}.err"
+directory="{{.WorkingDirectory}}"
+supervise_daemon_args="--chdir ${directory} --stdout /var/log/${name}.log --stderr /var/log/${name}.err"
 
 {{- if .Dependencies }}
 depend() {
