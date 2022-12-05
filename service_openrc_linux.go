@@ -63,9 +63,8 @@ func (s *openrc) template() *template.Template {
 
 	if customScript != "" {
 		return template.Must(template.New("").Funcs(tf).Parse(customScript))
-	} else {
-		return template.Must(template.New("").Funcs(tf).Parse(openRCScript))
 	}
+	return template.Must(template.New("").Funcs(tf).Parse(openRCScript))
 }
 
 func newOpenRCService(i Interface, platform string, c *Config) (Service, error) {
@@ -116,10 +115,12 @@ func (s *openrc) Install() error {
 
 	var to = &struct {
 		*Config
-		Path string
+		Path         string
+		LogDirectory string
 	}{
 		s.Config,
 		path,
+		s.Option.string(optionLogDirectory, defaultLogDirectory),
 	}
 
 	err = s.template().Execute(f, to)
@@ -243,8 +244,11 @@ command_args="{{range .Arguments}}{{.}} {{end}}"
 {{- end }}
 name=$(basename $(readlink -f $command))
 pidfile="/var/run/{{.Name}}.pid"
-directory="{{.WorkingDirectory}}"
-supervise_daemon_args="--chdir ${directory} --stdout /var/log/${name}.log --stderr /var/log/${name}.err"
+supervise_daemon_args="--stdout {{.LogDirectory}}/${name}.log --stderr {{.LogDirectory}}/${name}.err"
+
+{{range $k, $v := .EnvVars -}}
+export {{$k}}={{$v}}
+{{end -}}
 
 {{- if .Dependencies }}
 depend() {

@@ -63,13 +63,22 @@ func init() {
 			new: newOpenRCService,
 		},
 		linuxSystemService{
-			name: "linux-runit",
+			name:   "linux-runit",
 			detect: isRunit,
 			interactive: func() bool {
 				is, _ := isInteractive()
 				return is
 			},
 			new: newRunItService,
+		},
+		linuxSystemService{
+			name:   "linux-rcs",
+			detect: isRCS,
+			interactive: func() bool {
+				is, _ := isInteractive()
+				return is
+			},
+			new: newRCSService,
 		},
 		linuxSystemService{
 			name:   "unix-systemv",
