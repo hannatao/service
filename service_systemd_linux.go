@@ -317,7 +317,6 @@ func (s *systemd) runAction(action string) error {
 
 const systemdScript = `[Unit]
 Description={{.Description}}
-ConditionFileIsExecutable={{.Path|cmdEscape}}
 {{range $i, $dep := .Dependencies}} 
 {{$dep}} {{end}}
 
