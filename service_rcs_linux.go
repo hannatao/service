@@ -196,6 +196,10 @@ func (s *rcs) Status() (Status, error) {
 	}
 }
 
+func (s *rcs) GetPid() (uint32, error) {
+	return 0, errors.New("not implemented yet")
+}
+
 func (s *rcs) Start() error {
 	return run("/etc/init.d/"+s.Name, "start")
 }
