@@ -9,11 +9,13 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"text/template"
 )
 
 const version = "freebsd"
+const configDir = "/usr/local/etc/rc.d"
 
 type freebsdSystem struct{}
 
@@ -89,7 +91,11 @@ func (s *freebsdService) template() *template.Template {
 }
 
 func (s *freebsdService) configPath() (cp string, err error) {
-	cp = "/usr/local/etc/rc.d/" + s.Config.Name
+	if oserr := os.MkdirAll(configDir, 0755); oserr != nil {
+		err = oserr
+		return
+	}
+	cp = filepath.Join(configDir, s.Config.Name)
 	return
 }
 
