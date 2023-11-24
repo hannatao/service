@@ -197,7 +197,15 @@ func (s *rcs) Status() (Status, error) {
 }
 
 func (s *rcs) GetPid() (uint32, error) {
-	return 0, errors.New("not implemented yet")
+	pidBs, err := ioutil.ReadFile("/var/run/" + s.Config.Name + ".pid")
+	if err != nil {
+		return 0, err
+	}
+	pid, err := strconv.ParseUint(strings.TrimSpace(string(pidBs)), 10, 32)
+	if err != nil {
+		return 0, err
+	}
+	return uint32(pid), nil
 }
 
 func (s *rcs) Start() error {
